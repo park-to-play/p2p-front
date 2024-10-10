@@ -10,7 +10,6 @@ function getData(destination: string) {
 
 export default function SearchBar() {
   const [destination, setDestination] = useState<string>('');
-  console.log(destination);
   return (
     <div className='w-[95%] mx-auto'>
       <div className='flex flex-row items-center bg-white shadow-lg p-3 rounded-lg text-gray-800 border border-gray-200 hover:shadow-xl transition-shadow duration-300 ease-in-out'>
