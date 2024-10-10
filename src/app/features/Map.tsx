@@ -4,7 +4,25 @@ import { KAKAO_API } from '../components/EnvController';
 
 function Map() {
   const [mapSelecter, setMapSelecter] = useState<boolean>(false);
+  useEffect(() => {
+    const kakaoMapScript = document.createElement('script');
+    kakaoMapScript.async = false;
+    kakaoMapScript.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${KAKAO_API}&autoload=false`;
+    document.head.appendChild(kakaoMapScript);
+    const onLoadKakaoAPI = () => {
+      window.kakao.maps.load(() => {
+        let container = document.getElementById('map');
+        let options = {
+          center: new window.kakao.maps.LatLng(33.450701, 126.570667),
+          level: 3,
+        };
 
+        let map = new window.kakao.maps.Map(container, options);
+      });
+    };
+    kakaoMapScript.addEventListener('load', onLoadKakaoAPI);
+    setMapSelecter(true);
+  }, []);
   return mapSelecter ? (
     <div>
       <div className='flex items-center justify-center pt-2'>
