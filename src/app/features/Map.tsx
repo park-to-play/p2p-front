@@ -11,18 +11,19 @@ function Map() {
     document.head.appendChild(kakaoMapScript);
     const onLoadKakaoAPI = () => {
       window.kakao.maps.load(() => {
-        let container = document.getElementById('map');
-        let options = {
-          center: new window.kakao.maps.LatLng(33.450701, 126.570667),
+        const container = document.getElementById('map');
+        const options = {
+          center: new window.kakao.maps.LatLng(37.517734, 126.886441),
           level: 3,
         };
 
-        let map = new window.kakao.maps.Map(container, options);
+        const map = new window.kakao.maps.Map(container, options);
       });
     };
     kakaoMapScript.addEventListener('load', onLoadKakaoAPI);
     setMapSelecter(true);
   }, []);
+
   return mapSelecter ? (
     <div>
       <div className='flex items-center justify-center pt-2'>
