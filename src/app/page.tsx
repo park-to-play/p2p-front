@@ -4,7 +4,7 @@ import SearchBar from './features/SearchBar';
 import Map from './features/Map';
 import VisonData from './features/VisonData';
 import Advertisement from './features/Advertisement';
-import Connect from './features/Connect';
+import Footer from './features/Footer';
 export default function Home() {
   return (
     <section className='flex flex-col min-h-screen items-center body-font bg-gray-100'>
@@ -14,8 +14,8 @@ export default function Home() {
         <Map />
         <Advertisement />
         <VisonData />
-        <Connect />
       </div>
+      <Footer />
     </section>
   );
 }

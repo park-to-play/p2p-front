@@ -27,12 +27,7 @@ export default function SearchBar() {
           }}
           className='ml-3 p-2 bg-blue-500 hover:bg-blue-600 text-white rounded-full transition-colors duration-300 ease-in-out'
         >
-          <Image
-            src='/config/search-interface-symbol.png'
-            alt='Search'
-            width={16}
-            height={16}
-          />
+          <Image src='/config/search.png' alt='Search' width={16} height={16} />
         </button>
       </div>
     </div>
