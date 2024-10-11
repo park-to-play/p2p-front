@@ -5,15 +5,24 @@ import Map from './features/Map';
 import VisonData from './features/VisonData';
 import Advertisement from './features/Advertisement';
 import Footer from './features/Footer';
+import React, { useState } from 'react';
 export default function Home() {
+  const [selectVision, setSelectVision] = useState<boolean>(false);
   return (
     <section className='flex flex-col min-h-screen items-center body-font bg-gradient-to-t from-customWhiteBlue to-customSmothBlue'>
-      <div className='w-full md:max-w-[60%] mx-auto bg-white  p-4 sm:p-6'>
+      <div className='w-full md:max-w-[60%] mx-auto bg-white'>
         <HeadMenu />
         <SearchBar />
         <Map />
-        <Advertisement />
-        <VisonData />
+        {/* <Advertisement /> */}
+
+        {selectVision ? (
+          <div className='bg-slate-600 w-full rounded-t-3xl sm:p-5'>
+            <VisonData />
+          </div>
+        ) : (
+          <></>
+        )}
       </div>
       <div className='w-full max-h-[10%]'>
         <Footer />

@@ -267,21 +267,16 @@ function Map() {
   }, []);
 
   return mapSelecter ? (
-    <div>
-      <div className='flex items-center justify-center pt-2 text-black'>
-        <div id='map' className='w-[95%] h-72' />
-      </div>
+    <div className='flex items-center justify-center shadow-2xl p-5 text-black'>
+      <div
+        id='map'
+        className='w-[95%] h-screen shadow-lg border-4 border-customSmothBlue rounded-lg'
+      />
     </div>
   ) : (
     <div className='w-full min-h-max max-w-sm mx-auto p-4'>
       <div className='animate-pulse flex flex-col space-y-4'>
-        <div className='bg-gray-300 h-96 w-full rounded-md'></div>
-        <div className='flex-1 space-y-2'>
-          {/* 제목 스켈레톤 */}
-          <div className='h-4 bg-gray-300 rounded w-3/4'></div>
-          {/* 지도 설명 스켈레톤 */}
-          <div className='h-4 bg-gray-300 rounded w-1/2'></div>
-        </div>
+        <div className='bg-gray-300 w-[95%] h-72 rounded-md'></div>
       </div>
     </div>
   );
