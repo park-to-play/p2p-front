@@ -7,15 +7,17 @@ import Advertisement from './features/Advertisement';
 import Footer from './features/Footer';
 export default function Home() {
   return (
-    <section className='flex flex-col min-h-screen items-center body-font bg-gray-100'>
-      <div className='w-full md:max-w-[60%] mx-auto bg-slate-400 p-4 sm:p-6'>
+    <section className='flex flex-col min-h-screen items-center body-font bg-gradient-to-t from-customWhiteBlue to-customSmothBlue'>
+      <div className='w-full md:max-w-[60%] mx-auto bg-white  p-4 sm:p-6'>
         <HeadMenu />
         <SearchBar />
         <Map />
         <Advertisement />
         <VisonData />
       </div>
-      <Footer />
+      <div className='w-full max-h-[10%]'>
+        <Footer />
+      </div>
     </section>
   );
 }
