@@ -3,7 +3,6 @@ import HeadMenu from './features/HeadMenu';
 import SearchBar from './features/SearchBar';
 import Map from './features/Map';
 import VisonData from './features/VisonData';
-import Advertisement from './features/Advertisement';
 import Footer from './features/Footer';
 import React, { useState } from 'react';
 export default function Home() {
@@ -14,8 +13,6 @@ export default function Home() {
         <HeadMenu />
         <SearchBar />
         <Map />
-        {/* <Advertisement /> */}
-
         {selectVision ? (
           <div className='bg-slate-600 w-full rounded-t-3xl sm:p-5'>
             <VisonData />
