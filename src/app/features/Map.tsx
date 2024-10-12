@@ -1,8 +1,8 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import { KAKAO_API } from '../components/EnvController';
-import { Infowindow } from '../types/interface';
-// fixme
+import type { Infowindow } from '../types/interface.d.ts';
+
 function makeOverListener(map: any, marker: any, infowindow: any) {
   return function () {
     infowindow.open(map, marker);
@@ -17,25 +17,21 @@ function makeOutListener(infowindow: Infowindow) {
 }
 
 function displayMarker(map, locPosition, message) {
-  // 마커를 생성합니다
   const marker = new window.kakao.maps.Marker({
     map: map,
     position: locPosition,
   });
 
-  const iwContent = message, // 인포윈도우에 표시할 내용
+  const iwContent = message,
     iwRemoveable = true;
 
-  // 인포윈도우를 생성합니다
   const infowindow = new window.kakao.maps.InfoWindow({
     content: iwContent,
     removable: iwRemoveable,
   });
 
-  // 인포윈도우를 마커위에 표시합니다
   infowindow.open(map, marker);
 
-  // 지도 중심좌표를 접속위치로 변경합니다
   map.setCenter(locPosition);
 }
 
@@ -54,6 +50,7 @@ function Map() {
           level: 3,
         };
         const map = new window.kakao.maps.Map(container, options);
+        map.addOverlayMapTypeId(kakao.maps.MapTypeId.TRAFFIC);
         const positions = [
           // dummy set
           {
