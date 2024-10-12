@@ -15,7 +15,7 @@ export default function Home() {
         <SearchBar />
         <Map />
         {searchData ? (
-          <div className='bg-slate-600 w-full rounded-t-3xl sm:p-5'>
+          <div className='w-full md:bg-white sm:p-5'>
             <VisonData />
           </div>
         ) : (
