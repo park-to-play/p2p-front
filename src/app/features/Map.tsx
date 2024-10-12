@@ -3,20 +3,24 @@ import React, { useEffect, useState } from 'react';
 import { KAKAO_API } from '../components/EnvController';
 import type { Infowindow } from '../types/interface.d.ts';
 
-function makeOverListener(map: any, marker: any, infowindow: any) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function makeOverListener(map: any, marker: any, infowindow: Infowindow) {
   return function () {
     infowindow.open(map, marker);
   };
 }
 
-// 인포윈도우를 닫는 클로저를 만드는 함수입니다
 function makeOutListener(infowindow: Infowindow) {
   return function () {
     infowindow.close();
   };
 }
-
-function displayMarker(map, locPosition, message) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function displayMarker(
+  map: { setCenter: (arg0: any) => void },
+  locPosition: any,
+  message: string,
+) {
   const marker = new window.kakao.maps.Marker({
     map: map,
     position: locPosition,
