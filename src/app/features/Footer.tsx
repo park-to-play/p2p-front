@@ -4,16 +4,14 @@ import React from 'react';
 export default function Footer() {
   return (
     <div className=' w-full'>
-      <div className='w-full text-gray-100 py-10'>
+      <div className=' text-gray-100 py-10'>
         <div className='text-center'>
-          <h3 className='text-base sm:text-lg md:text-3xl lg:text-3xl xl:text-3xl mb-6 font-semibold'>
+          <h3 className='text-3xl mb-6 font-semibold'>
             주차, 이제 스마트하게! P2P로 빠르고 쉽게 해결하세요!
           </h3>
-          <div className='leading-relaxed text-gray-600'>
-            <h2 className='text-base sm:text-base md:text-lg lg:text-lg xl:text-lg font-bold '>
-              Park to Play (P2P)
-            </h2>
-            <p className=' text-blue-300 text-base sm:text-xs md:text-xs lg:text-sm xl:text-sm'>
+          <div className='text-sm leading-relaxed text-gray-600'>
+            <h2 className='text-lg font-bold '>Park to Play (P2P)</h2>
+            <p>
               Park to Play(P2P)는 주차를 더 효율적이고 스마트하게 만들어 주는
               서비스입니다. <br />
               사용자는 이용하고자 하는 시간에 주차 공간을 쉽게 찾고, 실시간으로
@@ -70,6 +68,8 @@ export default function Footer() {
             </svg>
           </Link>
         </div>
+
+        {/* Footer Text */}
         <div className='mt-8 text-center text-gray-500'>
           <p>&copy; Parking to play, 2024</p>
         </div>

@@ -267,7 +267,7 @@ function Map() {
   }, []);
 
   return mapSelecter ? (
-    <div className='flex items-center justify-center shadow-2xl p-5 text-black'>
+    <div className='flex items-center justify-center md:shadow-2xl p-5 text-black'>
       <div
         id='map'
         className='w-[95%] h-screen shadow-lg border-4 border-customSmothBlue rounded-lg'

@@ -9,7 +9,7 @@ export default function Home() {
   const [selectVision, setSelectVision] = useState<boolean>(false);
   return (
     <section className='flex flex-col min-h-screen items-center body-font bg-gradient-to-t from-customWhiteBlue to-customSmothBlue'>
-      <div className='w-full md:max-w-[60%] mx-auto bg-white'>
+      <div className='w-full md:max-w-[60%] mx-auto md:bg-white'>
         <HeadMenu />
         <SearchBar />
         <Map />
