@@ -1,9 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 import React, { useEffect, useState } from 'react';
 import { KAKAO_API } from '../components/EnvController';
 import type { Infowindow } from '../types/interface.d.ts';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function makeOverListener(map: any, marker: any, infowindow: Infowindow) {
   return function () {
     infowindow.open(map, marker);
@@ -15,7 +15,7 @@ function makeOutListener(infowindow: Infowindow) {
     infowindow.close();
   };
 }
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 function displayMarker(
   map: { setCenter: (arg0: any) => void },
   locPosition: any,
