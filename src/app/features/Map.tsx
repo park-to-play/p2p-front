@@ -1,41 +1,41 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 import React, { useEffect, useState } from 'react';
 import { KAKAO_API } from '../components/EnvController';
-import { Infowindow } from '../types/interface';
-// fixme
-function makeOverListener(map: any, marker: any, infowindow: any) {
+import type { Infowindow } from '../types/interface.d.ts';
+
+function makeOverListener(map: any, marker: any, infowindow: Infowindow) {
   return function () {
     infowindow.open(map, marker);
   };
 }
 
-// 인포윈도우를 닫는 클로저를 만드는 함수입니다
 function makeOutListener(infowindow: Infowindow) {
   return function () {
     infowindow.close();
   };
 }
 
-function displayMarker(map, locPosition, message) {
-  // 마커를 생성합니다
+function displayMarker(
+  map: { setCenter: (arg0: any) => void },
+  locPosition: any,
+  message: string,
+) {
   const marker = new window.kakao.maps.Marker({
     map: map,
     position: locPosition,
   });
 
-  const iwContent = message, // 인포윈도우에 표시할 내용
+  const iwContent = message,
     iwRemoveable = true;
 
-  // 인포윈도우를 생성합니다
   const infowindow = new window.kakao.maps.InfoWindow({
     content: iwContent,
     removable: iwRemoveable,
   });
 
-  // 인포윈도우를 마커위에 표시합니다
   infowindow.open(map, marker);
 
-  // 지도 중심좌표를 접속위치로 변경합니다
   map.setCenter(locPosition);
 }
 
@@ -54,6 +54,7 @@ function Map() {
           level: 3,
         };
         const map = new window.kakao.maps.Map(container, options);
+        map.addOverlayMapTypeId(kakao.maps.MapTypeId.TRAFFIC);
         const positions = [
           // dummy set
           {
@@ -229,7 +230,7 @@ function Map() {
           const marker = new window.kakao.maps.Marker({
             map: map, // 마커를 표시할 지도
             position: positions[i].latlng, // 마커를 표시할 위치
-            title: positions[i].title, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
+            title: positions[i].content, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
             image: markerImage, // 마커 이미지
           });
           const infowindow = new window.kakao.maps.InfoWindow({
@@ -267,21 +268,16 @@ function Map() {
   }, []);
 
   return mapSelecter ? (
-    <div>
-      <div className='flex items-center justify-center pt-2 text-black'>
-        <div id='map' className='w-[95%] h-72' />
-      </div>
+    <div className='flex items-center justify-center md:shadow-2xl p-5 text-black'>
+      <div
+        id='map'
+        className='w-[95%] h-screen shadow-lg border-4 border-customSmothBlue rounded-lg'
+      />
     </div>
   ) : (
     <div className='w-full min-h-max max-w-sm mx-auto p-4'>
       <div className='animate-pulse flex flex-col space-y-4'>
-        <div className='bg-gray-300 h-96 w-full rounded-md'></div>
-        <div className='flex-1 space-y-2'>
-          {/* 제목 스켈레톤 */}
-          <div className='h-4 bg-gray-300 rounded w-3/4'></div>
-          {/* 지도 설명 스켈레톤 */}
-          <div className='h-4 bg-gray-300 rounded w-1/2'></div>
-        </div>
+        <div className='bg-gray-300 w-[95%] h-72 rounded-md'></div>
       </div>
     </div>
   );
