@@ -6,6 +6,7 @@ import VisonData from './features/VisonData';
 import Footer from './features/Footer';
 import React from 'react';
 import { useGlobalState } from './hooks/globalSearchDataState';
+
 export default function Home() {
   const { searchData } = useGlobalState();
   return (

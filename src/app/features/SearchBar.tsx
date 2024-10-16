@@ -3,6 +3,7 @@ import Image from 'next/image';
 import React, { useState } from 'react';
 import apiSearch from '../services/apiSearch';
 import { useGlobalState } from '../hooks/globalSearchDataState';
+import axios from 'axios';
 
 function getData(destination: string) {
   const destination_list = apiSearch(destination, 'POST');
@@ -13,6 +14,35 @@ export default function SearchBar() {
   const [destination, setDestination] = useState<string>('');
   const [searchBarSlider, setSearchBarSlider] = useState<boolean>(false);
   const { searchData, setSearchData } = useGlobalState();
+  const test = async () => {
+    const header = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+
+    const body = destination;
+
+    try {
+      const response = await axios.post('/api/search', {
+        header,
+        body,
+      });
+
+      return {
+        props: {
+          searchResults: response.data,
+        },
+      };
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      return {
+        props: {
+          searchResults: [],
+        },
+      };
+    }
+  };
   return (
     <div className='w-[95%] mx-auto mt-3'>
       <div className='flex flex-row items-center bg-white shadow-lg p-3 rounded-lg text-gray-800 border border-gray-200 hover:shadow-xl transition-shadow duration-300 ease-in-out'>
@@ -35,6 +65,7 @@ export default function SearchBar() {
             getData(destination);
             setSearchBarSlider(false);
             setSearchData(!searchData);
+            test();
           }}
           className='ml-3 p-2 bg-blue-500 hover:bg-blue-600 text-white rounded-full transition-colors duration-300 ease-in-out'
         >
