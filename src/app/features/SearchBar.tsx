@@ -5,6 +5,8 @@ import axios from 'axios';
 import { useGlobalState } from '../hooks/globalSearchDataState';
 import { useGlobalLocationState } from '../hooks/globalLocationDataState';
 
+let timer: NodeJS.Timeout | undefined;
+
 // API 호출 함수
 async function getData(destination: string) {
   const header = {
@@ -20,7 +22,7 @@ async function getData(destination: string) {
       header,
       body,
     });
-    return response.data; // 연관 검색어 데이터를 반환
+    return response.data;
   } catch (error) {
     console.error('Error fetching data:', error);
     return [];
@@ -37,6 +39,16 @@ export default function SearchBar() {
     const results = await getData(destination);
     setSuggestions(results);
   };
+  const debounce = () => {
+    if (timer) {
+      clearTimeout(timer);
+    }
+    console.log('start');
+    timer = setTimeout(() => {
+      console.log('real');
+      handleSearch(); // 실제로 실행될 함수
+    }, 500);
+  };
 
   return (
     <div className='w-[95%] mx-auto mt-3'>
@@ -47,7 +59,7 @@ export default function SearchBar() {
           value={destination}
           onChange={(ans) => {
             setDestination(ans.target.value);
-            handleSearch();
+            debounce();
             if (ans.target.value === '') {
               setSearchBarSlider(false);
               setSuggestions([]);
@@ -79,11 +91,15 @@ export default function SearchBar() {
                   setDestination(
                     (e.currentTarget as HTMLLIElement).textContent || '',
                   );
+                  setSearchBarSlider(false);
+                  setSuggestions([]);
                   if (typeof suggestion === 'string') {
                     const parsedSuggestion = JSON.parse(suggestion);
                     setLocationData(parsedSuggestion);
+                    setSearchData(true);
                   } else {
                     setLocationData(suggestion);
+                    setSearchData(true);
                   }
                 }}
               >
