@@ -70,7 +70,7 @@ export default function SearchBar() {
       {searchBarSlider && suggestions.length > 0 && (
         <div className='w-full mt-2 bg-white rounded-lg shadow-lg p-4 text-black'>
           <h3 className='text-lg font-semibold mb-2'>연관 검색어</h3>
-          <ul className='space-y-2'>
+          <ul className='space-y-2 overflow-y-auto max-h-60'>
             {suggestions.map((suggestion, index) => (
               <li
                 key={index}
