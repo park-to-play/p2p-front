@@ -31,8 +31,8 @@ export default function SearchBar() {
   const [destination, setDestination] = useState<string>('');
   const [searchBarSlider, setSearchBarSlider] = useState<boolean>(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
-  const { searchData, setSearchData } = useGlobalState();
-  const { locationData, setLocationData } = useGlobalLocationState();
+  const { setSearchData } = useGlobalState();
+  const { setLocationData } = useGlobalLocationState();
   const handleSearch = async () => {
     const results = await getData(destination);
     setSuggestions(results);
