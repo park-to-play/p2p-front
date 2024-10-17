@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import './globals.css';
 import { GlobalStateProvider } from './hooks/globalSearchDataState';
+import { GlovalLocationStateProvider } from './hooks/globalLocationDataState';
 
 const geistSans = localFont({
   src: './fonts/GeistVF.woff',
@@ -30,7 +31,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <GlobalStateProvider>{children}</GlobalStateProvider>
+        <GlobalStateProvider>
+          <GlovalLocationStateProvider>{children}</GlovalLocationStateProvider>
+        </GlobalStateProvider>
       </body>
     </html>
   );
