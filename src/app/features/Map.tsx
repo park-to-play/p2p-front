@@ -4,6 +4,36 @@ import React, { useEffect, useState } from 'react';
 import { KAKAO_API } from '../components/EnvController';
 import type { Infowindow } from '../types/interface.d.ts';
 import { useGlobalLocationState } from '../hooks/globalLocationDataState';
+import axios from 'axios';
+
+async function getMakrerData(lat: number, lng: number) {
+  const header = {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  };
+
+  const body = {
+    CURRENT_LAT: lat,
+    CURRENT_LNG: lng,
+  };
+
+  try {
+    const response = await axios.post('/api/nearParkingList', {
+      header,
+      body,
+    });
+    const transformedData = response.data.map((item: any[]) => ({
+      content: `<div>${item[0]}</div>`,
+      latlng: new window.kakao.maps.LatLng(item[2], item[3]),
+    }));
+
+    return transformedData;
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    return [];
+  }
+}
 
 function makeOverListener(map: any, marker: any, infowindow: Infowindow) {
   return function () {
@@ -17,10 +47,11 @@ function makeOutListener(infowindow: Infowindow) {
   };
 }
 
-function displayMarker(
+async function displayMarker(
   map: { setCenter: (arg0: any) => void },
   locPosition: any,
   message: string,
+  locationData: { [key: string]: number },
 ) {
   const marker = new window.kakao.maps.Marker({
     map: map,
@@ -34,6 +65,41 @@ function displayMarker(
     content: iwContent,
     removable: iwRemoveable,
   });
+  if (locationData !== undefined) {
+    const positions = await getMakrerData(locationData[1], locationData[2]);
+    const imageSrc = '/config/parkinghold.png';
+    for (let i = 0; i < positions.length; i++) {
+      // 마커 이미지의 이미지 크기 입니다
+      const imageSize = new window.kakao.maps.Size(24, 24);
+
+      const markerImage = new window.kakao.maps.MarkerImage(
+        imageSrc,
+        imageSize,
+      );
+
+      // 마커를 생성합니다
+      const marker = new window.kakao.maps.Marker({
+        map: map, // 마커를 표시할 지도
+        position: positions[i].latlng, // 마커를 표시할 위치
+        title: positions[i].content, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
+        image: markerImage, // 마커 이미지
+      });
+      const infowindow = new window.kakao.maps.InfoWindow({
+        content: positions[i].content, // 인포윈도우에 표시할 내용
+      });
+
+      new window.kakao.maps.event.addListener(
+        marker,
+        'mouseover',
+        makeOverListener(map, marker, infowindow),
+      );
+      new window.kakao.maps.event.addListener(
+        marker,
+        'mouseout',
+        makeOutListener(infowindow),
+      );
+    }
+  }
 
   infowindow.open(map, marker);
 
@@ -57,66 +123,33 @@ function Map() {
         };
         const map = new window.kakao.maps.Map(container, options);
         map.addOverlayMapTypeId(kakao.maps.MapTypeId.TRAFFIC);
-        const positions = [
-          // dummy set
-          {
-            content: '<div>양화3주차장[양화선착장앞]</div>',
-            latlng: new window.kakao.maps.LatLng(37.54489139, 126.89289421),
-          },
-        ];
-        const imageSrc = '/config/parkinghold.png';
-
-        for (let i = 0; i < positions.length; i++) {
-          // 마커 이미지의 이미지 크기 입니다
-          const imageSize = new window.kakao.maps.Size(24, 24);
-
-          // 마커 이미지를 생성합니다
-          const markerImage = new window.kakao.maps.MarkerImage(
-            imageSrc,
-            imageSize,
+        // let positions = [
+        //   // dummy set
+        //   {
+        //     content: '<div>양화3주차장[양화선착장앞]</div>',
+        //     latlng: new window.kakao.maps.LatLng(37.54489139, 126.89289421),
+        //   },
+        // ];
+        // let position =
+        if (locationData[0] !== undefined) {
+          const locPosition = new kakao.maps.LatLng(
+            locationData[1],
+            locationData[2],
           );
+          const message = `<div style="padding:5px;">${locationData[0]}</div>`;
+          displayMarker(map, locPosition, message, locationData);
+        } else if (navigator.geolocation) {
+          // GeoLocation을 이용해서 접속 위치를 얻어옵니다
+          navigator.geolocation.getCurrentPosition(function (position) {
+            const lat = position.coords.latitude, // 위도
+              lon = position.coords.longitude; // 경도
 
-          // 마커를 생성합니다
-          const marker = new window.kakao.maps.Marker({
-            map: map, // 마커를 표시할 지도
-            position: positions[i].latlng, // 마커를 표시할 위치
-            title: positions[i].content, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
-            image: markerImage, // 마커 이미지
-          });
-          const infowindow = new window.kakao.maps.InfoWindow({
-            content: positions[i].content, // 인포윈도우에 표시할 내용
-          });
+            const locPosition = new kakao.maps.LatLng(lat, lon), // 마커가 표시될 위치를 geolocation으로 얻어온 좌표로 생성합니다
+              message = '<div style="padding:5px;">현위치</div>'; // 인포윈도우에 표시될 내용입니다
 
-          new window.kakao.maps.event.addListener(
-            marker,
-            'mouseover',
-            makeOverListener(map, marker, infowindow),
-          );
-          new window.kakao.maps.event.addListener(
-            marker,
-            'mouseout',
-            makeOutListener(infowindow),
-          );
-          if (locationData[0] !== undefined) {
-            const locPosition = new kakao.maps.LatLng(
-              locationData[1],
-              locationData[2],
-            );
-            const message = `<div style="padding:5px;">${locationData[0]}</div>`;
+            // 마커와 인포윈도우를 표시합니다
             displayMarker(map, locPosition, message);
-          } else if (navigator.geolocation) {
-            // GeoLocation을 이용해서 접속 위치를 얻어옵니다
-            navigator.geolocation.getCurrentPosition(function (position) {
-              const lat = position.coords.latitude, // 위도
-                lon = position.coords.longitude; // 경도
-
-              const locPosition = new kakao.maps.LatLng(lat, lon), // 마커가 표시될 위치를 geolocation으로 얻어온 좌표로 생성합니다
-                message = '<div style="padding:5px;">현위치</div>'; // 인포윈도우에 표시될 내용입니다
-
-              // 마커와 인포윈도우를 표시합니다
-              displayMarker(map, locPosition, message);
-            });
-          }
+          });
         }
       });
     };

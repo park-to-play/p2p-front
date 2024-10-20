@@ -43,10 +43,8 @@ export default function SearchBar() {
     if (timer) {
       clearTimeout(timer);
     }
-    console.log('start');
     timer = setTimeout(() => {
-      console.log('real');
-      handleSearch(); // 실제로 실행될 함수
+      handleSearch();
     }, 500);
   };
 
