@@ -3,6 +3,7 @@ import localFont from 'next/font/local';
 import './globals.css';
 import { GlobalStateProvider } from './hooks/globalSearchDataState';
 import { GlovalLocationStateProvider } from './hooks/globalLocationDataState';
+import { GlobalParkingNameProvider } from './hooks/glovalParkingName';
 
 const geistSans = localFont({
   src: './fonts/GeistVF.woff',
@@ -32,7 +33,9 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <GlobalStateProvider>
-          <GlovalLocationStateProvider>{children}</GlovalLocationStateProvider>
+          <GlovalLocationStateProvider>
+            <GlobalParkingNameProvider>{children}</GlobalParkingNameProvider>
+          </GlovalLocationStateProvider>
         </GlobalStateProvider>
       </body>
     </html>

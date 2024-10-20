@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { KAKAO_API } from '../components/EnvController';
 import type { Infowindow } from '../types/interface.d.ts';
 import { useGlobalLocationState } from '../hooks/globalLocationDataState';
+import { useGlobalParkingNameState } from '../hooks/glovalParkingName';
 import axios from 'axios';
 
 async function getMakrerData(lat: number, lng: number) {
@@ -35,7 +36,15 @@ async function getMakrerData(lat: number, lng: number) {
   }
 }
 
-function makeOverListener(map: any, marker: any, infowindow: Infowindow) {
+function makeOverListener(
+  map: any,
+  marker: any,
+  infowindow: Infowindow,
+  setParkingName?: (val: string) => void,
+) {
+  const parkingName = map.title;
+  console.log('parkingName: ', parkingName);
+  if (setParkingName) setParkingName(parkingName);
   return function () {
     infowindow.open(map, marker);
   };
@@ -51,7 +60,8 @@ async function displayMarker(
   map: { setCenter: (arg0: any) => void },
   locPosition: any,
   message: string,
-  locationData: { [key: string]: number },
+  locationData?: { [key: string]: number },
+  setParkingName?: ((val: string) => void) | undefined,
 ) {
   const marker = new window.kakao.maps.Marker({
     map: map,
@@ -87,11 +97,10 @@ async function displayMarker(
       const infowindow = new window.kakao.maps.InfoWindow({
         content: positions[i].content, // 인포윈도우에 표시할 내용
       });
-
       new window.kakao.maps.event.addListener(
         marker,
         'mouseover',
-        makeOverListener(map, marker, infowindow),
+        makeOverListener(map, marker, infowindow, setParkingName),
       );
       new window.kakao.maps.event.addListener(
         marker,
@@ -109,6 +118,7 @@ async function displayMarker(
 function Map() {
   const [mapSelecter, setMapSelecter] = useState<boolean>(false);
   const { locationData } = useGlobalLocationState();
+  const { setParkingName } = useGlobalParkingNameState();
   useEffect(() => {
     const kakaoMapScript = document.createElement('script');
     kakaoMapScript.async = false;
@@ -117,27 +127,25 @@ function Map() {
     const onLoadKakaoAPI = () => {
       window.kakao.maps.load(() => {
         const container = document.getElementById('map');
-        let options = {
+        const options = {
           center: new window.kakao.maps.LatLng(37.517734, 126.886441),
           level: 3,
         };
         const map = new window.kakao.maps.Map(container, options);
         map.addOverlayMapTypeId(kakao.maps.MapTypeId.TRAFFIC);
-        // let positions = [
-        //   // dummy set
-        //   {
-        //     content: '<div>양화3주차장[양화선착장앞]</div>',
-        //     latlng: new window.kakao.maps.LatLng(37.54489139, 126.89289421),
-        //   },
-        // ];
-        // let position =
         if (locationData[0] !== undefined) {
           const locPosition = new kakao.maps.LatLng(
             locationData[1],
             locationData[2],
           );
           const message = `<div style="padding:5px;">${locationData[0]}</div>`;
-          displayMarker(map, locPosition, message, locationData);
+          displayMarker(
+            map,
+            locPosition,
+            message,
+            locationData,
+            setParkingName,
+          );
         } else if (navigator.geolocation) {
           // GeoLocation을 이용해서 접속 위치를 얻어옵니다
           navigator.geolocation.getCurrentPosition(function (position) {
