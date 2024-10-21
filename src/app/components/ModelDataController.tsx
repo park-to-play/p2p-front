@@ -13,6 +13,7 @@ import {
 } from 'chart.js';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useGlobalParkingNameState } from '../hooks/glovalParkingName';
 
 ChartJS.register(
   CategoryScale,
@@ -24,13 +25,10 @@ ChartJS.register(
   Legend,
 );
 
-interface RawData {
-  parking_name: string;
-  pred_parking: number;
-  pre_parking_time: Date;
-}
+type Item = [string, number, Date];
 
 const ChartPage = () => {
+  const { parkingName } = useGlobalParkingNameState();
   const [chartData, setChartData] = useState({
     labels: [] as string[],
     datasets: [
@@ -47,43 +45,39 @@ const ChartPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.post('/api/parkingDataChart', {
-          body: {
-            parking_name: 'Your Parking Name', // 필요 시 업데이트
-          },
-          header: {
-            'Content-Type': 'application/json',
-          },
-        });
+        if (parkingName !== '') {
+          const response = await axios.get(
+            `http://127.0.0.1:8000/parkingData/?parking_name=${parkingName}`,
+          );
+          const rawData: Item[] = response.data;
 
-        const rawData: RawData[] = response.data;
-
-        // 데이터 변환
-        const labels = rawData.map((item) =>
-          new Date(item.pre_parking_time).toLocaleString(),
-        );
-        const values = rawData.map((item) => item.pred_parking);
-
-        setChartData({
-          labels, // x축 레이블 (시간)
-          datasets: [
-            {
-              label: '주차 예측 데이터',
-              data: values, // y축 데이터 (예측 주차 값)
-              borderColor: 'rgba(75, 192, 192, 1)',
-              backgroundColor: 'rgba(75, 192, 192, 0.2)',
-              fill: true,
-            },
-          ],
-        });
+          // 데이터 변환
+          const labels = rawData.map((item: Item) => {
+            return new Date(item[2]).toLocaleString();
+          });
+          const values = rawData.map((item: Item) => {
+            return item[1];
+          });
+          setChartData({
+            labels, // x축 레이블 (시간)
+            datasets: [
+              {
+                label: '주차 예측 데이터',
+                data: values, // y축 데이터 (예측 주차 값)
+                borderColor: 'rgba(75, 192, 192, 1)',
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                fill: true,
+              },
+            ],
+          });
+        }
       } catch (error) {
         console.error('Error fetching parking data:', error);
       }
     };
 
     fetchData();
-  }, []); // 컴포넌트가 처음 렌더링될 때만 실행
-
+  }, [parkingName]);
   // 차트 옵션 설정
   const options: ChartOptions<'line'> = {
     responsive: true,

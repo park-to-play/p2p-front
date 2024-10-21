@@ -27,8 +27,8 @@ async function getMakrerData(lat: number, lng: number) {
     const transformedData = response.data.map((item: any[]) => ({
       content: `<div>${item[0]}</div>`,
       latlng: new window.kakao.maps.LatLng(item[2], item[3]),
+      parkingName: item[0],
     }));
-
     return transformedData;
   } catch (error) {
     console.error('Error fetching data:', error);
@@ -40,12 +40,12 @@ function makeOverListener(
   map: any,
   marker: any,
   infowindow: Infowindow,
-  setParkingName?: (val: string) => void,
+  getParkingName: (name: string) => void,
 ) {
-  const parkingName = map.title;
-  console.log('parkingName: ', parkingName);
-  if (setParkingName) setParkingName(parkingName);
   return function () {
+    const rawContent = marker.Gb; // marker.Gb에 HTML이 포함된 문자열
+    const strippedContent = rawContent.replace(/<[^>]*>/g, ''); // 정규식을 사용하여 HTML 태그 제거
+    getParkingName(strippedContent); // 태그가 제거된 순수 텍스트를 getParkingName에 전달
     infowindow.open(map, marker);
   };
 }
@@ -61,7 +61,7 @@ async function displayMarker(
   locPosition: any,
   message: string,
   locationData?: { [key: string]: number },
-  setParkingName?: ((val: string) => void) | undefined,
+  setParkingName?: (name: string) => void,
 ) {
   const marker = new window.kakao.maps.Marker({
     map: map,
@@ -93,15 +93,18 @@ async function displayMarker(
         position: positions[i].latlng, // 마커를 표시할 위치
         title: positions[i].content, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
         image: markerImage, // 마커 이미지
+        parking_name: positions[i].parkingName,
       });
       const infowindow = new window.kakao.maps.InfoWindow({
         content: positions[i].content, // 인포윈도우에 표시할 내용
       });
-      new window.kakao.maps.event.addListener(
-        marker,
-        'mouseover',
-        makeOverListener(map, marker, infowindow, setParkingName),
-      );
+      if (setParkingName) {
+        new window.kakao.maps.event.addListener(
+          marker,
+          'mouseover',
+          makeOverListener(map, marker, infowindow, setParkingName),
+        );
+      }
       new window.kakao.maps.event.addListener(
         marker,
         'mouseout',
@@ -118,7 +121,7 @@ async function displayMarker(
 function Map() {
   const [mapSelecter, setMapSelecter] = useState<boolean>(false);
   const { locationData } = useGlobalLocationState();
-  const { setParkingName } = useGlobalParkingNameState();
+  const { parkingName, setParkingName } = useGlobalParkingNameState();
   useEffect(() => {
     const kakaoMapScript = document.createElement('script');
     kakaoMapScript.async = false;
@@ -163,7 +166,7 @@ function Map() {
     };
     kakaoMapScript.addEventListener('load', onLoadKakaoAPI);
     setMapSelecter(true);
-  }, [locationData]);
+  }, [locationData, setParkingName]);
 
   return mapSelecter ? (
     <div className='flex items-center justify-center md:shadow-2xl p-5 text-black'>

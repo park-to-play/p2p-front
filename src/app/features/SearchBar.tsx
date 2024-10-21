@@ -35,16 +35,16 @@ export default function SearchBar() {
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const { setSearchData } = useGlobalState();
   const { setLocationData } = useGlobalLocationState();
-  const handleSearch = async () => {
-    const results = await getData(destination);
+  const handleSearch = async (dest: string) => {
+    const results = await getData(dest);
     setSuggestions(results);
   };
-  const debounce = () => {
+  const debounce = (dest: string) => {
     if (timer) {
       clearTimeout(timer);
     }
     timer = setTimeout(() => {
-      handleSearch();
+      handleSearch(dest);
     }, 500);
   };
 
@@ -57,7 +57,7 @@ export default function SearchBar() {
           value={destination}
           onChange={(ans) => {
             setDestination(ans.target.value);
-            debounce();
+            debounce(ans.target.value);
             if (ans.target.value === '') {
               setSearchBarSlider(false);
               setSuggestions([]);
