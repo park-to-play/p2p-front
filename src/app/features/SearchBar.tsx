@@ -45,7 +45,7 @@ export default function SearchBar() {
     }
     timer = setTimeout(() => {
       handleSearch(dest);
-    }, 500);
+    }, 300);
   };
 
   return (

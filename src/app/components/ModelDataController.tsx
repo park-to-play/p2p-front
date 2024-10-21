@@ -78,7 +78,6 @@ const ChartPage = () => {
 
     fetchData();
   }, [parkingName]);
-  // 차트 옵션 설정
   const options: ChartOptions<'line'> = {
     responsive: true,
     plugins: {
@@ -87,7 +86,7 @@ const ChartPage = () => {
       },
       title: {
         display: true,
-        text: '주차 시간별 예측 데이터',
+        text: `${parkingName}`,
       },
     },
     scales: {
@@ -100,7 +99,7 @@ const ChartPage = () => {
       y: {
         title: {
           display: true,
-          text: '예측 주차 수',
+          text: '예측 주차 대수',
         },
       },
     },

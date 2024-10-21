@@ -104,10 +104,20 @@ async function displayMarker(
           'mouseover',
           makeOverListener(map, marker, infowindow, setParkingName),
         );
+        new window.kakao.maps.event.addListener(
+          marker,
+          'touchstart',
+          makeOverListener(map, marker, infowindow, setParkingName),
+        );
       }
       new window.kakao.maps.event.addListener(
         marker,
         'mouseout',
+        makeOutListener(infowindow),
+      );
+      new window.kakao.maps.event.addListener(
+        marker,
+        'touchend',
         makeOutListener(infowindow),
       );
     }
@@ -154,9 +164,9 @@ function Map() {
           navigator.geolocation.getCurrentPosition(function (position) {
             const lat = position.coords.latitude, // 위도
               lon = position.coords.longitude; // 경도
-
-            const locPosition = new kakao.maps.LatLng(lat, lon), // 마커가 표시될 위치를 geolocation으로 얻어온 좌표로 생성합니다
-              message = '<div style="padding:5px;">현위치</div>'; // 인포윈도우에 표시될 내용입니다
+            // const locPosition = new kakao.maps.LatLng(lat, lon),
+            const locPosition = new kakao.maps.LatLng(37.517734, 126.886441),
+              message = `<div style="padding:5px;">현재위치</div>`; // 인포윈도우에 표시될 내용입니다
 
             // 마커와 인포윈도우를 표시합니다
             displayMarker(map, locPosition, message);
