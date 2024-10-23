@@ -109,6 +109,11 @@ async function displayMarker(
           'touchstart',
           makeOverListener(map, marker, infowindow, setParkingName),
         );
+        new window.kakao.maps.event.addListener(
+          marker,
+          'click',
+          makeOverListener(map, marker, infowindow, setParkingName),
+        );
       }
       new window.kakao.maps.event.addListener(
         marker,
@@ -183,6 +188,12 @@ function Map() {
       <div
         id='map'
         className='w-[95%] h-screen shadow-lg border-4 border-customSmothBlue rounded-lg'
+        onClick={() => {
+          window.scrollTo({
+            top: document.body.scrollHeight * 0.4,
+            behavior: 'smooth', // 부드럽게 스크롤
+          });
+        }}
       />
     </div>
   ) : (
