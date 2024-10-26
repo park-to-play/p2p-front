@@ -2,21 +2,41 @@ import Link from 'next/link';
 import React from 'react';
 
 export default function Footer() {
+  const isMobile = window.innerWidth <= 768;
   return (
     <div className=' w-full'>
       <div className=' text-gray-100 py-10'>
         <div className='text-center'>
-          <h3 className='text-3xl mb-6 font-semibold'>
-            주차, 이제 스마트하게! P2P로 빠르고 쉽게 해결하세요!
-          </h3>
+          {isMobile ? (
+            <h3 className='text-3xl mb-6 font-semibold'>
+              주차, 이제 스마트하게! <br />
+              P2P로 빠르고 쉽게 해결하세요!
+            </h3>
+          ) : (
+            <h3 className='text-3xl mb-6 font-semibold'>
+              주차, 이제 스마트하게! P2P로 빠르고 쉽게 해결하세요!
+            </h3>
+          )}
+
           <div className='text-sm leading-relaxed text-gray-600'>
             <h2 className='text-lg font-bold '>Park to Play (P2P)</h2>
-            <p>
-              Park to Play(P2P)는 주차를 더 효율적이고 스마트하게 만들어 주는
-              서비스입니다. <br />
-              사용자는 이용하고자 하는 시간에 주차 공간을 쉽게 찾고, 실시간으로
-              주차 상황을 확인하여 더많은 시간을 자유롭게 사용할수 있습니다.
-            </p>
+            {isMobile ? (
+              <p>
+                Park to Play(P2P)는 주차를 더 효율적이고 <br />
+                스마트하게 만들어 주는 서비스입니다. <br />
+                사용자는 이용하고자 하는 시간에 주차 공간을 쉽게 찾고, <br />
+                실시간으로 주차 상황을 확인하여 더많은 시간을 자유롭게 사용할수
+                있습니다.
+              </p>
+            ) : (
+              <p>
+                Park to Play(P2P)는 주차를 더 효율적이고 스마트하게 만들어 주는
+                서비스입니다. <br />
+                사용자는 이용하고자 하는 시간에 주차 공간을 쉽게 찾고,
+                실시간으로 주차 상황을 확인하여 더많은 시간을 자유롭게 사용할수
+                있습니다.
+              </p>
+            )}
           </div>
         </div>
         <div className='flex justify-center space-x-8 text-sm text-gray-400'>
@@ -71,7 +91,7 @@ export default function Footer() {
 
         {/* Footer Text */}
         <div className='mt-8 text-center text-gray-500'>
-          <p>&copy; Parking to play, 2024</p>
+          <p>&copy; Park to play, 2024</p>
         </div>
       </div>
     </div>

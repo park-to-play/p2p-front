@@ -10,7 +10,9 @@ import {
   Tooltip,
   Legend,
   ChartOptions,
+  Chart,
 } from 'chart.js';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useGlobalParkingNameState } from '../hooks/glovalParkingName';
@@ -38,40 +40,61 @@ const ChartPage = () => {
         borderColor: 'rgba(75, 192, 192, 1)',
         backgroundColor: 'rgba(75, 192, 192, 0.2)',
         fill: true,
+        pointBackgroundColor: [] as string[], // 포인트 색상 배열 추가
       },
     ],
   });
-
+  Chart.register(ChartDataLabels);
   useEffect(() => {
     const fetchData = async () => {
       try {
         if (parkingName !== '') {
+          const isMobile = window.innerWidth <= 768;
           const response = await axios.get(
             `http://127.0.0.1:8000/parkingData/?parking_name=${parkingName}`,
           );
-          const rawData: Item[] = response.data;
+          let rawData: Item[] = response.data;
+          // 시간 기준으로 정렬
+          rawData.sort(
+            (a, b) => new Date(a[2]).getTime() - new Date(b[2]).getTime(),
+          );
+          rawData = rawData.filter(
+            (item, index, self) =>
+              index ===
+              self.findIndex(
+                (t) => new Date(t[2]).getTime() === new Date(item[2]).getTime(),
+              ),
+          );
 
+          const dataToShow = rawData;
           // 데이터 변환
-          const labels = rawData.map((item: Item) => {
+          const labels = dataToShow.map((item: Item) => {
             const test = new Date(item[2]).toLocaleString();
             return '오' + test.split('오')[1];
           });
-          const values = rawData.map((item: Item) => {
-            return item[1];
-          });
-          const isMobile = window.innerWidth <= 768; // 768px 이하일 경우 모바일 화면으로 간주
+          const values = dataToShow.map((item: Item) => item[1]);
+
           const lineColor = isMobile
-            ? 'rgba(0, 0, 0, 1)'
-            : 'rgba(75, 192, 192, 1)'; // 모바일이면 검은색, 아니면 기본 색상
+            ? 'rgba(255, 255, 255, 1)'
+            : 'rgba(75, 192, 192, 1)';
+
+          const pointColors = values.map(
+            (_, index) =>
+              index === values.length - 1
+                ? 'rgba(255, 99, 132, 1)' // 마지막 값의 색상
+                : lineColor, // 나머지 값의 색상
+          );
+
           setChartData({
-            labels, // x축 레이블 (시간)
+            labels,
             datasets: [
               {
                 label: '주차 예측 데이터',
-                data: values, // y축 데이터 (예측 주차 값)
+                data: values,
                 borderColor: lineColor,
                 backgroundColor: 'rgba(75, 192, 192, 0.2)',
                 fill: true,
+                pointBackgroundColor: pointColors, // 각 포인트의 색상을 지정
               },
             ],
           });
@@ -85,8 +108,8 @@ const ChartPage = () => {
   }, [parkingName]);
 
   const options: ChartOptions<'line'> = {
-    responsive: true, // 반응형으로 설정
-    maintainAspectRatio: false, // 비율 유지 해제
+    responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         position: 'top' as const,
@@ -94,6 +117,15 @@ const ChartPage = () => {
       title: {
         display: true,
         text: `${parkingName}`,
+      },
+      datalabels: {
+        anchor: 'end',
+        align: 'top',
+        offset: 3, // 데이터 레이블을 5px 위로 띄움
+        color: '#000', // 레이블 색상
+        font: {
+          size: 12, // 폰트 크기
+        },
       },
     },
     scales: {
@@ -103,11 +135,17 @@ const ChartPage = () => {
           text: '시간',
         },
         ticks: {
-          autoSkip: true, // 레이블 간격 자동 조정
-          maxRotation: 45, // 최대 회전 각도
-          minRotation: 0, // 최소 회전 각도 (회전이 필요 없을 때는 0)
+          autoSkip: true,
+          maxRotation: 45,
+          minRotation: 0,
+          stepSize: 4, // 간격을 조정하여 레이블이 덜 겹치게
           font: {
-            size: 10, // x축 글자 크기 조절
+            size: 10,
+          },
+          callback: function (value: number, index, ticks) {
+            // 긴 레이블을 잘라 표시하기 (필요한 경우)
+            const label = this.getLabelForValue(value);
+            return label.length > 10 ? label.substr(0, 10) + '...' : label;
           },
         },
       },
